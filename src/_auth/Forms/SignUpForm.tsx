@@ -14,7 +14,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { SignUpValidation as SignInValidation } from "@/lib/validation";
+import { SignUpValidation as SignUpValidation } from "@/lib/validation";
 import { z } from "zod";
 import Loader from "@/components/shared/Loader";
 import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
