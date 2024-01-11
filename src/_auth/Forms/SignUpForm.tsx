@@ -11,11 +11,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
 import { SignUpValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
+import { createUserAccount } from "@/lib/appwrite/api";
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +40,9 @@ const SignUpForm = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
-    // const newUser = await createUserAccount(values);
+    const newUser = await createUserAccount(values);
+
+    console.log(newUser);
   }
 
   return (
