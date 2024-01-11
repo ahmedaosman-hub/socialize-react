@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,25 +10,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-import { useToast } from "@/components/ui/toaster";
 import { Input } from "@/components/ui/input";
 import { SignUpValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { createUserAccount } from "@/lib/appwrite/api";
+import {
+  useCreateUserAccount,
+  useSignInAccount,
+} from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const SignUpForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const isLoading = false;
-  // 1. Define your form.
   const form = useForm<z.infer<typeof SignUpValidation>>({
     resolver: zodResolver(SignUpValidation),
     defaultValues: {
@@ -39,7 +43,12 @@ const SignUpForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
+  //Queries
+  const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
+    useCreateUserAccount();
+  const { mutateAsync: signInAccount, isPending: isSigningInUser } =
+    useSignInAccount();
+
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
     const newUser = await createUserAccount(values);
 
@@ -49,7 +58,23 @@ const SignUpForm = () => {
       });
     }
 
-    // const session = await signInAccount();
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (!session) {
+      return toast({ title: "Sign in failed. Please try again." });
+    }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+      navigate("/");
+    } else {
+      return toast({ title: "Sign in failed. Please try again." });
+    }
   }
 
   return (
@@ -60,7 +85,6 @@ const SignUpForm = () => {
           alt="logo"
           className="w-100 h-auto"
         />
-
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
           Create a new account
         </h2>
@@ -81,7 +105,6 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type="email" className="shad-input" {...field} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -95,12 +118,10 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type="text" className="shad-input" {...field} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="username"
@@ -110,12 +131,10 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type="text" className="shad-input" {...field} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="password"
@@ -133,7 +152,7 @@ const SignUpForm = () => {
                   <Button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className="ml-2 px-3 py-1 border border-gray-600 rounded bg-gray-800 hover:bg-gray-700 text-white" // Adjust colors and spacing as needed
+                    className="ml-2 px-3 py-1 border border-gray-600 rounded bg-gray-800 hover:bg-gray-700 text-white"
                   >
                     {showPassword ? "Hide" : "Show"}
                   </Button>
@@ -144,7 +163,7 @@ const SignUpForm = () => {
           />
 
           <Button type="submit" className="shad-button_primary">
-            {isLoading ? (
+            {isCreatingAccount ? (
               <div className="flex center gap-2">
                 <Loader />
                 Setting Up Your World...
