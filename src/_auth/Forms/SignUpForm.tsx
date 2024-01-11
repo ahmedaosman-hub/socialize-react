@@ -15,8 +15,15 @@ import { Input } from "@/components/ui/input";
 import { SignUpValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { Link } from "react-router-dom";
+import React, { useState } from "react";
 
 const SignUpForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const isLoading = false;
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignUpValidation>>({
@@ -37,18 +44,37 @@ const SignUpForm = () => {
   return (
     <Form {...form}>
       <div className="sm:w-420 flex-center flex-col">
-        <img src="/assets/images/logo.svg" alt="logo" className="mb-8" />
+        <img
+          src="/assets/images/logo.svg"
+          alt="logo"
+          className="w-100 h-auto"
+        />
 
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
           Create a new account
         </h2>
-        <p className="text-light-3 small-medium md:base-regular mt-2">
-          To use Socialize React, please enter your details
+        <p className="text-light-3 small-medium md:base-regular mt-2 text-center">
+          Start connecting and sharing with the world around you. Sign up now.
         </p>
+
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-5 w-full mt-4"
         >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input type="email" className="shad-input" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="name"
@@ -81,46 +107,44 @@ const SignUpForm = () => {
 
           <FormField
             control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input type="email" className="shad-input" {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" className="shad-input" {...field} />
-                </FormControl>
-
+                <div className="flex items-center">
+                  <FormControl className="flex items-center justify-between">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      className="shad-input"
+                      {...field}
+                    />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="ml-2 px-3 py-1 border border-gray-600 rounded bg-gray-800 hover:bg-gray-700 text-white" // Adjust colors and spacing as needed
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <Button type="submit" className="shad-button_primary">
             {isLoading ? (
               <div className="flex center gap-2">
                 <Loader />
-                Loading...
+                Setting Up Your World...
               </div>
             ) : (
-              "Sign Up"
+              "Create My Account"
             )}
           </Button>
 
           <p className="text-small-regular text-light-2 text-center mt-2">
-            Already have an account?{" "}
+            Already part of our community?{" "}
             <Link
               to="/sign-in"
               className="text-primary-500 text-small-semibold ml-1"
