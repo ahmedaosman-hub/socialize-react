@@ -75,11 +75,9 @@ const SignInForm = () => {
           alt="logo"
           className="w-100 h-auto"
         />
-        <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
-          Log into your account
-        </h2>
+        <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">Welcome back!</h2>
         <p className="text-light-3 small-medium md:base-regular mt-2 text-center">
-          Welcome back.
+          Access your personalized dashboard.
         </p>
 
         <form
@@ -131,20 +129,20 @@ const SignInForm = () => {
             {isUserLoading ? (
               <div className="flex center gap-2">
                 <Loader />
-                Setting Up Your World...
+                Signing you in...
               </div>
             ) : (
-              "Sign In"
+              "Log In"
             )}
           </Button>
 
           <p className="text-small-regular text-light-2 text-center mt-2">
-            Don't have an account?{" "}
+            New here?{" "}
             <Link
               to="/sign-up"
               className="text-primary-500 text-small-semibold ml-1"
             >
-              Sign Up
+              Sign Up Now!
             </Link>
           </p>
         </form>
