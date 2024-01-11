@@ -44,24 +44,20 @@ const SignInForm = () => {
   const { mutateAsync: signInAccount, isPending } = useSignInAccount();
 
   async function onSubmit(values: z.infer<typeof SignInValidation>) {
-    console.log("We are in");
     const session = await signInAccount({
       email: values.email,
       password: values.password,
     });
-
-    console.log({ session });
 
     if (!session) {
       return toast({ title: "Sign in failed. Please try again." });
     }
 
     const isLoggedIn = await checkAuthUser();
-    console.log({ isLoggedIn });
 
     if (isLoggedIn) {
       form.reset();
-      console.log("Navigating");
+
       navigate("/");
     } else {
       return toast({ title: "Sign in failed. Please try again." });
