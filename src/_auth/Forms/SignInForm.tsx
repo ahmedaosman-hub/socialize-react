@@ -44,23 +44,34 @@ const SignInForm = () => {
   const { mutateAsync: signInAccount, isPending } = useSignInAccount();
 
   async function onSubmit(values: z.infer<typeof SignInValidation>) {
-    const session = await signInAccount({
-      email: values.email,
-      password: values.password,
-    });
+    try {
+      const session = await signInAccount({
+        email: values.email,
+        password: values.password,
+      });
 
-    if (!session) {
-      return toast({ title: "Sign in failed. Please try again." });
-    }
+      if (!session) {
+        throw new Error("Invalid email or password.");
+      }
 
-    const isLoggedIn = await checkAuthUser();
+      const isLoggedIn = await checkAuthUser();
 
-    if (isLoggedIn) {
-      form.reset();
+      if (isLoggedIn) {
+        form.reset();
+        navigate("/");
+      } else {
+        throw new Error("Authentication check failed. Please try again.");
+      }
+    } catch (error) {
+      // Customize this part based on the structure of your error object
+      let errorMessage = "Sign in failed. Please try again.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (error.response && error.response.data) {
+        errorMessage = error.response.data.message || errorMessage;
+      }
 
-      navigate("/");
-    } else {
-      return toast({ title: "Sign in failed. Please try again." });
+      toast({ title: errorMessage });
     }
   }
 

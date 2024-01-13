@@ -52,30 +52,39 @@ const SignUpForm = () => {
     useSignInAccount();
 
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
-    const newUser = await createUserAccount(values);
+    try {
+      const newUser = await createUserAccount(values);
 
-    if (!newUser) {
-      return toast({
-        title: "Sign up failed. Please try again.",
+      if (!newUser) {
+        throw new Error("Account creation failed due to unknown error.");
+      }
+
+      const session = await signInAccount({
+        email: values.email,
+        password: values.password,
       });
-    }
 
-    const session = await signInAccount({
-      email: values.email,
-      password: values.password,
-    });
+      if (!session) {
+        throw new Error("Sign in failed after account creation.");
+      }
 
-    if (!session) {
-      return toast({ title: "Sign in failed. Please try again." });
-    }
+      const isLoggedIn = await checkAuthUser();
 
-    const isLoggedIn = await checkAuthUser();
+      if (isLoggedIn) {
+        form.reset();
+        navigate("/");
+      } else {
+        throw new Error("Authentication check failed after sign in.");
+      }
+    } catch (error) {
+      let errorMessage = "An error occurred. Please try again.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (error.response && error.response.data) {
+        errorMessage = error.response.data.message || errorMessage;
+      }
 
-    if (isLoggedIn) {
-      form.reset();
-      navigate("/");
-    } else {
-      return toast({ title: "Sign in failed. Please try again." });
+      toast({ title: errorMessage });
     }
   }
 
