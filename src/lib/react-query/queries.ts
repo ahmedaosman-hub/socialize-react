@@ -27,6 +27,7 @@ import {
   deleteSavedPost,
 } from "@/lib/appwrite/api";
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
+
 // ============================================================
 // AUTH QUERIES
 // ============================================================
