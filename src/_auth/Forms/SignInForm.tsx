@@ -17,7 +17,7 @@ import {
 import Loader from "@/components/shared/Loader";
 
 import { SignInValidation } from "@/lib/validation";
-import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
+import { useSignInAccount } from "@/lib/react-query/queries";
 import { useUserContext } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 const SignInForm = () => {
