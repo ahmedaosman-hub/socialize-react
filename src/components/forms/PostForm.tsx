@@ -1,17 +1,17 @@
 import * as z from "zod";
 import { Models } from "appwrite";
 import { useForm } from "react-hook-form";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { PostValidation } from "@/lib/validation";
 import { useToast } from "@/components/ui/use-toast";
 import { useUserContext } from "@/context/AuthContext";
+import { FileUploader, Loader } from "@/components/shared";
 import { useCreatePost, useUpdatePost } from "@/lib/react-query/queries";
-import { Loader } from "lucide-react";
-import FileUploader from "../shared/FileUploader";
 import { Button } from "../ui/button";
 import {
+  Form,
   FormField,
   FormItem,
   FormLabel,
