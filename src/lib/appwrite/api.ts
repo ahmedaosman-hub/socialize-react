@@ -1,4 +1,5 @@
 import { ID, Query } from "appwrite";
+import Compressor from "compressorjs";
 
 import { appwriteConfig, account, databases, storage, avatars } from "./config";
 import { IUpdatePost, INewPost, INewUser, IUpdateUser } from "@/types";
@@ -164,10 +165,23 @@ export async function createPost(post: INewPost) {
 // ============================== UPLOAD FILE
 export async function uploadFile(file: File) {
   try {
+    let compressedFile = file;
+
+    // Check if the file is an image
+    if (file.type.startsWith("image/")) {
+      compressedFile = await new Promise((resolve, reject) => {
+        new Compressor(file, {
+          quality: 0.6, // Compression quality (0 to 1)
+          success: resolve,
+          error: reject,
+        });
+      });
+    }
+
     const uploadedFile = await storage.createFile(
       appwriteConfig.storageId,
       ID.unique(),
-      file
+      compressedFile
     );
 
     return uploadedFile;
