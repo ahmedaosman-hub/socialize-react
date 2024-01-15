@@ -171,8 +171,14 @@ export async function uploadFile(file: File) {
     if (file.type.startsWith("image/")) {
       compressedFile = await new Promise((resolve, reject) => {
         new Compressor(file, {
-          quality: 0.6, // Compression quality (0 to 1)
-          success: resolve,
+          quality: 0.6,
+          success: (compressedBlob) => {
+            const compressedFile = new File([compressedBlob], file.name, {
+              type: compressedBlob.type,
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          },
           error: reject,
         });
       });
