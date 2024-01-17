@@ -28,30 +28,30 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
   const { data: currentUser } = useGetCurrentUser();
 
-  const savedPostRecord =
-    currentUser?.save?.find(
-      (record: Models.Document) => record.post.$id === post.$id
-    ) || [];
+  const savedPostRecord = currentUser?.save?.find(
+    (record: Models.Document) => record.post.$id === post.$id
+  );
 
   useEffect(() => {
     setIsSaved(!!savedPostRecord);
-  }, [currentUser, savedPostRecord]);
+  }, [currentUser]);
 
   const handleLikePost = (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>
   ) => {
     e.stopPropagation();
 
-    let likesArray = [...likes];
+    let newLikes = [...likes];
 
-    if (likesArray.includes(userId)) {
-      likesArray = likesArray.filter((Id) => Id !== userId);
+    const hasLiked = newLikes.includes(userId);
+    if (hasLiked) {
+      newLikes = newLikes.filter((id) => id !== userId);
     } else {
-      likesArray.push(userId);
+      newLikes.push(userId);
     }
 
-    setLikes(likesArray);
-    likePost({ postId: post.$id, likesArray });
+    setLikes(newLikes);
+    likePost({ postId: post.$id, likesArray: newLikes });
   };
 
   const handleSavePost = (
@@ -62,10 +62,10 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     if (savedPostRecord) {
       setIsSaved(false);
       return deleteSavePost(savedPostRecord.$id);
+    } else {
+      savePost({ postId: post.$id, userId: userId });
+      setIsSaved(true);
     }
-
-    savePost({ userId: userId, postId: post.$id });
-    setIsSaved(true);
   };
 
   const containerStyles = location.pathname.startsWith("/profile")

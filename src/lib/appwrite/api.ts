@@ -423,6 +423,7 @@ export async function deleteSavedPost(savedRecordId: string) {
 
     return { status: "Ok" };
   } catch (error) {
+    console.log(savedRecordId);
     console.log(error);
   }
 }
