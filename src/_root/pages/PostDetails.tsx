@@ -11,6 +11,7 @@ import {
 import { multiFormatDateString } from "@/lib/utils";
 import { useUserContext } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
+import GridPostList from "@/components/shared/GridPostList";
 
 const PostDetails = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const PostDetails = () => {
   const { user } = useUserContext();
 
   const { data: post, isPending } = useGetPostById(id || "");
-  const { data: userPosts, isLoading: isUserPostLoading } = useGetUserPosts(
+  const { data: userPosts, isPending: isUserPostLoading } = useGetUserPosts(
     post?.creator.$id
   );
   const { mutate: deletePost } = useDeletePost();
