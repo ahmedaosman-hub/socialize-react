@@ -19,7 +19,7 @@ const PostDetails = () => {
   const { user } = useUserContext();
 
   const { data: post, isPending } = useGetPostById(id || "");
-  const { data: userPosts, isPending: isUserPostLoading } = useGetUserPosts(
+  const { data: userPosts, isLoading: isUserPostLoading } = useGetUserPosts(
     post?.creator.$id
   );
   const { mutate: deletePost } = useDeletePost();
