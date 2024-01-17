@@ -1,8 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 
-import { Button } from "@/components/ui";
 import { Loader } from "@/components/shared";
-import { GridPostList, PostStats } from "@/components/shared";
+import { PostStats } from "@/components/shared";
 
 import {
   useGetPostById,
@@ -11,6 +10,7 @@ import {
 } from "@/lib/react-query/queries";
 import { multiFormatDateString } from "@/lib/utils";
 import { useUserContext } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const PostDetails = () => {
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ const PostDetails = () => {
                 </div>
               </Link>
 
-              <div className="flex-center gap-4">
+              <div className="flex-center ">
                 <Link
                   to={`/update-post/${post?.$id}`}
                   className={`${user.id !== post?.creator.$id && "hidden"}`}
@@ -106,7 +106,7 @@ const PostDetails = () => {
                 <Button
                   onClick={handleDeletePost}
                   variant="ghost"
-                  className={`ost_details-delete_btn ${
+                  className={`ghost_details-delete_btn ${
                     user.id !== post?.creator.$id && "hidden"
                   }`}
                 >
