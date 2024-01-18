@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useUserContext, INITIAL_USER } from "@/context/AuthContext";
 import { useSignOutAccount } from "@/lib/react-query/queries";
 import Loader from "./Loader";
-import { INavLink } from "@/lib/types";
+import { INavLink } from "@/types";
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
