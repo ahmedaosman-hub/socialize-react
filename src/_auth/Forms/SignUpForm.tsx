@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,7 +27,7 @@ import { useToast } from "@/components/ui/use-toast";
 const SignUpForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const { checkAuthUser } = useUserContext();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -48,8 +48,7 @@ const SignUpForm = () => {
   //Queries
   const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
     useCreateUserAccount();
-  const { mutateAsync: signInAccount, isPending: isSigningInUser } =
-    useSignInAccount();
+  const { mutateAsync: signInAccount } = useSignInAccount();
 
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
     try {
@@ -76,14 +75,20 @@ const SignUpForm = () => {
       } else {
         throw new Error("Authentication check failed after sign in.");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       let errorMessage = "An error occurred. Please try again.";
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (error.response && error.response.data) {
-        errorMessage = error.response.data.message || errorMessage;
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error
+      ) {
+        const responseError = error as {
+          response: { data: { message: string } };
+        };
+        errorMessage = responseError.response.data.message || errorMessage;
       }
-
       toast({ title: errorMessage });
     }
   }
