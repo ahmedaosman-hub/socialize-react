@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,7 +41,7 @@ const SignInForm = () => {
 
   //Queries
 
-  const { mutateAsync: signInAccount, isPending } = useSignInAccount();
+  const { mutateAsync: signInAccount } = useSignInAccount();
 
   async function onSubmit(values: z.infer<typeof SignInValidation>) {
     try {
@@ -62,13 +62,19 @@ const SignInForm = () => {
       } else {
         throw new Error("Authentication check failed. Please try again.");
       }
-    } catch (error) {
-      // Customize this part based on the structure of your error object
+    } catch (error: unknown) {
       let errorMessage = "Sign in failed. Please try again.";
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (error.response && error.response.data) {
-        errorMessage = error.response.data.message || errorMessage;
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error
+      ) {
+        const responseError = error as {
+          response: { data: { message: string } };
+        };
+        errorMessage = responseError.response.data.message || errorMessage;
       }
 
       toast({ title: errorMessage });
